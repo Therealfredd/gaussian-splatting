@@ -28,15 +28,17 @@ colmap_command = '"{}"'.format(args.colmap_executable) if len(args.colmap_execut
 magick_command = '"{}"'.format(args.magick_executable) if len(args.magick_executable) > 0 else "magick"
 use_gpu = 1 if not args.no_gpu else 0
 
-if not args.skip_matching:
-    os.makedirs(args.source_path + "/distorted/sparse", exist_ok=True)
+if not args.skip_matching: # If we are not skipping matching, we need to do feature extraction and matching.
+    os.makedirs(args.source_path + "/distorted/sparse", exist_ok=True) # Make the sparse directory if it doesn't exist.
 
-    ## Feature extraction
+    ## Feature extraction #
+
+        # THEO HERER - TAKEN THSESE OUT
+       # --ImageReader.single_camera 1 \
+      #  --ImageReader.camera_model " + args.camera + " \
     feat_extracton_cmd = colmap_command + " feature_extractor "\
         "--database_path " + args.source_path + "/distorted/database.db \
         --image_path " + args.source_path + "/input \
-        --ImageReader.single_camera 1 \
-        --ImageReader.camera_model " + args.camera + " \
         --SiftExtraction.use_gpu " + str(use_gpu)
     exit_code = os.system(feat_extracton_cmd)
     if exit_code != 0:
@@ -58,8 +60,8 @@ if not args.skip_matching:
     mapper_cmd = (colmap_command + " mapper \
         --database_path " + args.source_path + "/distorted/database.db \
         --image_path "  + args.source_path + "/input \
-        --output_path "  + args.source_path + "/distorted/sparse \
-        --Mapper.ba_global_function_tolerance=0.000001")
+        --output_path "  + args.source_path + "/distorted/sparse")
+   #  ALSO TOOK THIS OUT  --Mapper.ba_global_function_tolerance=0.000001")
     exit_code = os.system(mapper_cmd)
     if exit_code != 0:
         logging.error(f"Mapper failed with code {exit_code}. Exiting.")
